@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppstoreOutlined, HistoryOutlined, HomeFilled, LikeOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, FolderFilled, HistoryOutlined, HomeFilled, LikeOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Menu, notification } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -27,14 +27,14 @@ const Header = () => {
                 icon: <UserOutlined />
             },
             {
-                label: <Link to={'/activities'}>Activity</Link>,
-                key: 'Activity',
-                icon: <HistoryOutlined />
-            },
-            {
                 label: <Link to={'/favourites'}>Favourite</Link>,
                 key: 'Favourite',
                 icon: <LikeOutlined />
+            },
+            {
+                label: <Link to={'/folders'}>Folders</Link>,
+                key: 'Folders',
+                icon: <FolderFilled />
             },
         ] : []),
         {

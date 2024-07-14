@@ -11,8 +11,9 @@ import User from './pages/User.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import { AuthWrapper } from './components/context/auth.context.jsx';
-import Activity from './pages/Activity.jsx';
 import Favourite from './pages/Favourite.jsx';
+import Folder from './pages/Folder.jsx';
+import FolderDetail from './pages/FolderDetail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,14 @@ const router = createBrowserRouter([
       {
         path:"favourites",
         element:<Favourite/>
+      },
+      {
+        path:"folders",
+        element:<Folder/>
+      },
+      {
+        path:"folders/:id",
+        element:<FolderDetail/>
       }
     ]
   },
@@ -40,10 +49,6 @@ const router = createBrowserRouter([
   {
     path: "login",
     element: <Login />
-  },
-  {
-    path:"activities",
-    element:<Activity/>
   },
 
 ]);

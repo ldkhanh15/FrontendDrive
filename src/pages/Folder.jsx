@@ -4,7 +4,7 @@ import FileList from '../components/components/FileList';
 import { getAllFolder } from '../services/itemService';
 import { useSearchParams } from 'react-router-dom';
 
-const Home = () => {
+const Folder = () => {
   const [data, setData] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -46,4 +46,4 @@ const Home = () => {
   return <>{data && <FileList data={data} loading={loading} pagination={pagination} onChange={handleTableChange}/>}</>;
 };
 
-export default Home;
+export default Folder;

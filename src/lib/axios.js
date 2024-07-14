@@ -35,7 +35,7 @@ instance.interceptors.request.use(function (config) {
     const accessToken = window.localStorage.getItem('access_token');
 
     // Không thêm Authorization header nếu là yêu cầu làm mới token
-    if (config.url !== '/api/v1/auth/refresh' && accessToken) {
+    if (config.url !== '/api/v1/auth/refresh' && accessToken && config.url !== '/api/v1/auth/login') {
         config.headers.Authorization = 'Bearer ' + accessToken;
     }
 
