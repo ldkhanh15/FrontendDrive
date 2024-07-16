@@ -7,7 +7,7 @@ const User = () => {
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 2,
+    pageSize: 5,
     total: 0,
   });
   const [loading, setLoading] = useState(false);
@@ -56,6 +56,17 @@ const User = () => {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+    },
+    {
+      title: 'Enabled',
+      dataIndex: 'enabled',
+      key: 'enabled',
+      render: (enabled) => (<span>{enabled ? 'true' : 'false'}</span>)
+    },
+    {
+      title: 'StorageQuota',
+      dataIndex: 'storageQuota',
+      key: 'storageQuota',
     },
     {
       title: 'Avatar',

@@ -17,14 +17,14 @@ const handleRefreshToken = async () => {
         try {
             const res = await instance.get('/api/v1/auth/refresh');
             if (res && res.data) {
-                console.log("Token refreshed successfully");
+                // console.log("Token refreshed successfully");
                 return res.data.access_token;
             } else {
-                console.log("Failed to refresh token");
+                // console.log("Failed to refresh token");
                 return null;
             }
         } catch (error) {
-            console.error("Error during refresh token request", error);
+            // console.error("Error during refresh token request", error);
             return null;
         }
     });
@@ -53,11 +53,11 @@ instance.interceptors.response.use(
     (res) => res.data,
     async (error) => {
         const originalRequest = error.config;
-        console.log("Error response status:", error.response.status);
+        // console.log("Error response status:", error.response.status);
 
         // Kiểm tra lỗi 401 và không phải từ endpoint login
         if (error.response.status === 401 && originalRequest.url !== '/api/v1/auth/login' && !originalRequest.headers[NO_RETRY_HEADER]) {
-            console.log("Token expired, attempting to refresh token");
+            // console.log("Token expired, attempting to refresh token");
             const accessToken = await handleRefreshToken();
             originalRequest.headers[NO_RETRY_HEADER] = 'true';
             if (accessToken) {

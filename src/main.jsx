@@ -14,6 +14,8 @@ import { AuthWrapper } from './components/context/auth.context.jsx';
 import Favourite from './pages/Favourite.jsx';
 import Folder from './pages/Folder.jsx';
 import FolderDetail from './pages/FolderDetail.jsx';
+import Role from './pages/Role.jsx';
+import Permission from './pages/Permission.jsx';
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
       {
         path:"folders/:id",
         element:<FolderDetail/>
+      },
+      {
+        path:"roles",
+        element:<Role/>
+      },
+      {
+        path:"permissions",
+        element:<Permission/>
       }
     ]
   },

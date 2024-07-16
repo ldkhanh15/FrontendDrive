@@ -1,9 +1,9 @@
 import axios from '../lib/axios'
 
-export const getUser=()=>{
-    return axios.get("/api/v1/users")
+export const getUser = (page,size) => {
+    return axios.get(`/api/v1/users?page=${page}&size=${size}`)
 }
 
-export const getActivity=()=>{
+export const getActivity = () => {
     return axios.get("/api/v1/activities")
 }

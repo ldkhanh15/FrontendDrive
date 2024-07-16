@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppstoreOutlined, FolderFilled, HistoryOutlined, HomeFilled, LikeOutlined, MailOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, EyeOutlined, FolderFilled, HistoryOutlined, HomeFilled, LikeOutlined, LockFilled, MailOutlined, SettingOutlined, UserOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import { Menu, notification } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -35,6 +35,16 @@ const Header = () => {
                 label: <Link to={'/folders'}>Folders</Link>,
                 key: 'Folders',
                 icon: <FolderFilled />
+            },
+            {
+                label: <Link to={'/roles'}>Role</Link>,
+                key: 'Role',
+                icon: <UserSwitchOutlined />
+            },
+            {
+                label: <Link to={'/permissions'}>Permission</Link>,
+                key: 'Permission',
+                icon: <LockFilled />
             },
         ] : []),
         {

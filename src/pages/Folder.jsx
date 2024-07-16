@@ -1,10 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { notification } from 'antd';
+import { notification, Space, Typography } from 'antd';
 import FileList from '../components/components/FileList';
 import { getAllFolder } from '../services/itemService';
-import { useSearchParams } from 'react-router-dom';
-
+import { Link, useSearchParams } from 'react-router-dom';
+import { FileFilled, FolderFilled } from '@ant-design/icons';
+const { Text } = Typography;
 const Folder = () => {
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'folderName',
+      key: 'folderName',
+      render: (text, record) => (
+        <Space onContextMenu={(e) => handleRightClick(e, record)}>
+          {record.itemType === 'FOLDER' ? (
+            <Link to={`/folders/${record.itemId}`}>
+              <FolderFilled style={{ marginRight: 8 }} />
+            </Link>
+          ) : (
+            <FileFilled style={{ marginRight: 8 }} />
+          )}
+          <Text strong={record.itemType === 'FOLDER'}>{record.itemType === 'FOLDER' ? record.folderName : record.fileName}</Text>
+        </Space>
+      ),
+    },
+    {
+      title: 'Type',
+      dataIndex: 'itemType',
+      key: 'itemType',
+      render: (text) => <Text>{text}</Text>,
+    },
+    {
+      title: 'Created By',
+      dataIndex: ['user', 'email'],
+      key: 'createdBy',
+      render: (email) => <Text>{email}</Text>,
+    },
+    {
+      title: 'Created At',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (createdAt) => <Text>{new Date(createdAt).toLocaleString()}</Text>,
+    }
+  ];
   const [data, setData] = useState(null);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -13,9 +51,9 @@ const Folder = () => {
   });
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const fetchData = async (page,pageSize) => {
+  const fetchData = async (page, pageSize) => {
     setLoading(true);
-    const res = await getAllFolder(page,pageSize);
+    const res = await getAllFolder(page, pageSize);
     if (res?.data?.result) {
       setData(res.data.result);
       setPagination({
@@ -43,7 +81,7 @@ const Folder = () => {
     const { current, pageSize } = pagination;
     setSearchParams({ page: current, size: pageSize });
   };
-  return <>{data && <FileList data={data} loading={loading} pagination={pagination} onChange={handleTableChange}/>}</>;
+  return <>{data && <FileList columns={columns} data={data} loading={loading} pagination={pagination} onChange={handleTableChange} />}</>;
 };
 
 export default Folder;
