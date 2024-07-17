@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, message } from 'antd';
+import { Table, Button, Modal, Form, Input, Select, message, Space, Tag, Typography } from 'antd';
 import axios from 'axios';
-import { getAllFavourite } from '../services/favouriteService';
+import { addFavourite, deleteFavourite, getAllFavourite } from '../services/favouriteService';
+import { FileFilled, FolderFilled } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import { getUser } from '../services/userService';
+import { getAllFolder, getDetailFolder } from '../services/itemService';
 
 const { Option } = Select;
-
+const { Text } = Typography
 const Favourite = () => {
   const [favourites, setFavourites] = useState([]);
-  const [users, setUsers] = useState([]);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,14 +18,13 @@ const Favourite = () => {
 
   useEffect(() => {
     fetchFavourites();
-    // fetchUsers();
-    // fetchItems();
+    fetchItems();
   }, []);
 
   const fetchFavourites = async () => {
     setLoading(true);
     try {
-      const response = await getAllFavourite(); 
+      const response = await getAllFavourite();
       setFavourites(response.data.result);
     } catch (error) {
       message.error('Failed to load favourite items');
@@ -30,19 +32,11 @@ const Favourite = () => {
     setLoading(false);
   };
 
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get('/api/v1/users'); // Adjust the endpoint as needed
-      setUsers(response.data.data.result);
-    } catch (error) {
-      message.error('Failed to load users');
-    }
-  };
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get('/api/v1/items'); // Adjust the endpoint as needed
-      setItems(response.data.data.result);
+      const response = await getDetailFolder(1, 'enabled'); // Adjust the endpoint as needed
+      setItems(response.data.subFolders)
     } catch (error) {
       message.error('Failed to load items');
     }
@@ -55,7 +49,7 @@ const Favourite = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/v1/favourites/${id}`); // Adjust the endpoint as needed
+      await deleteFavourite(id) // Adjust the endpoint as needed
       message.success('Favourite deleted');
       fetchFavourites();
     } catch (error) {
@@ -66,11 +60,11 @@ const Favourite = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      const favourite = {
-        userId: values.userId,
-        itemId: values.itemId,
-      };
-      await axios.post('/api/v1/favourites', favourite); // Adjust the endpoint as needed
+      await addFavourite({
+        item: {
+          id: values.itemId
+        }
+      });
       message.success('Favourite created');
       setModalVisible(false);
       fetchFavourites();
@@ -81,52 +75,96 @@ const Favourite = () => {
 
   const columns = [
     {
-      title: 'Favourite ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'User Email',
-      dataIndex: ['user', 'email'],
-      key: 'userEmail',
-    },
-    {
-      title: 'Item ID',
-      dataIndex: ['item', 'itemId'],
-      key: 'itemId',
-    },
-    {
-      title: 'Item Type',
-      dataIndex: ['item', 'itemType'],
-      key: 'itemType',
-    },
-    {
-      title: 'Folder Name',
+      title: 'Name',
       dataIndex: ['item', 'folderName'],
       key: 'folderName',
+      render: (text, record) => (
+        <Space onContextMenu={(e) => handleRightClick(e, record)}>
+          {record.item.itemType === 'FOLDER' ? (
+            <Link to={`/folders/${record.item.itemId}`}>
+              <FolderFilled style={{ marginRight: 8 }} />
+            </Link>
+          ) : (
+            <FileFilled style={{ marginRight: 8 }} />
+          )}
+          <Text strong={record.itemType === 'FOLDER'}>{record.item.itemType === 'FOLDER' ? record.item.folderName : record.item.fileName}</Text>
+        </Space>
+      ),
     },
     {
       title: 'Created At',
       dataIndex: ['item', 'createdAt'],
       key: 'createdAt',
+      render: (createdAt) => <Text>{new Date(createdAt).toLocaleString()}</Text>,
     },
     {
-      title: 'Created By',
-      dataIndex: ['item', 'createdBy'],
-      key: 'createdBy',
+      title: 'Enabled',
+      dataIndex: ['item', 'isEnabled'],
+      key: 'isEnabled',
+      render: (isEnabled) => {
+
+        let tag = isEnabled ? 'true' : 'false'
+        let color = isEnabled ? 'green' : 'red'
+
+        return (
+          <Tag color={color} key={tag}>
+            {tag.toUpperCase()}
+          </Tag>
+        );
+
+      }
     },
     {
-      title: 'Owner Email',
+      title: 'Deleted',
+      dataIndex: ['item', 'isDeleted'],
+      key: 'isDeleted',
+      render: (isDeleted) => {
+        let tag = isDeleted === true ? 'true' : 'false'
+        let color = isDeleted === true ? 'green' : 'red'
+
+        return (
+          <Tag color={color} key={tag}>
+            {tag.toUpperCase()}
+          </Tag>
+        );
+
+      }
+    },
+    {
+      title: 'Public',
+      key: ['item', 'isPublic'],
+      dataIndex: 'isPublic',
+      render: (isPublic) => {
+
+        let tag = isPublic ? 'true' : 'false'
+        let color = isPublic ? 'green' : 'red'
+
+        return (
+          <Tag color={color} key={tag}>
+            {tag.toUpperCase()}
+          </Tag>
+        );
+
+      }
+    },
+    {
+      title: 'Owner email',
       dataIndex: ['item', 'user', 'email'],
-      key: 'ownerEmail',
+      key: 'owner email',
+      render: (email) => <Text>{email}</Text>,
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: (text, record) => (
-        <>
-          <Button onClick={() => handleDelete(record.id)} type="link" danger>Delete</Button>
-        </>
+      render: (_, record) => (
+        <Space size="middle">
+          {record.item.itemType === 'FOLDER' ? (
+            <Link to={`/folders/${record.item.itemId}`}>Open</Link>
+          ) : (
+            <a target="_blank" href={`http://localhost:8080/storage/file/${record.item.filePath}`}>Open</a>
+          )}
+          <span onClick={() => handleDelete(record.id)}>Delete</span>
+        </Space>
       ),
     },
   ];
@@ -149,13 +187,6 @@ const Favourite = () => {
         onCancel={() => setModalVisible(false)}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="userId" label="User" rules={[{ required: true }]}>
-            <Select placeholder="Select a user">
-              {users.map(user => (
-                <Option key={user.id} value={user.id}>{user.email}</Option>
-              ))}
-            </Select>
-          </Form.Item>
           <Form.Item name="itemId" label="Item" rules={[{ required: true }]}>
             <Select placeholder="Select an item">
               {items.map(item => (

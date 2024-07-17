@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Form, Input, Menu, Modal, notification, Select, Space, Upload, Checkbox, Tag } from 'antd';
+import { Typography, Button,Menu, notification, Select, Space, Tag } from 'antd';
 import FileList from '../components/components/FileList';
-import { createFolder, deleteFile, deleteFolder, deleteSoftFile, deleteSoftFolder, getDetailFolder, renameFolder, restoreFile, restoreFolder, uploadFile } from '../services/itemService';
+import {  deleteFile, deleteFolder, deleteSoftFile, deleteSoftFolder, getDetailFolder, restoreFile, restoreFolder } from '../services/itemService';
 import { Link, useParams } from 'react-router-dom';
-import { FileFilled, FolderFilled, UploadOutlined } from '@ant-design/icons';
+import { FileFilled, FolderFilled } from '@ant-design/icons';
 import UploadFileModal from '../components/components/UploadFileModal';
 import CreateEditFolderModal from '../components/components/CreateEditFolderModal';
 import ActivityModal from '../components/components/ActivityModal';
