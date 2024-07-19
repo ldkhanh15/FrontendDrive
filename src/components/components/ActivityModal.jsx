@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Drawer, Spin, Tree, message } from 'antd';
-import { getActivity } from '../../services/itemService';
+import { getActivity } from '../../services/activityService';
 
 const ActivityModal = ({ itemId, open, setOpen }) => {
     const [loading, setLoading] = useState(false);

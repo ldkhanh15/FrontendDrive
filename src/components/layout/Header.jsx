@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppstoreOutlined, EyeOutlined, FolderFilled, HistoryOutlined, HomeFilled, LikeOutlined, LockFilled, MailOutlined, SettingOutlined, UserOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, EyeOutlined, FolderFilled, HistoryOutlined, HomeFilled, LikeOutlined, LockFilled, MailOutlined, ProfileFilled, SettingOutlined, StarTwoTone, UserOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import { Menu, notification } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -13,23 +13,36 @@ const Header = () => {
     };
     const { auth, setAuth } = useContext(AuthContext)
     const navigator = useNavigate()
-
+    console.log(auth);
     const items = [
         {
-            label: <Link to={'/'}>My Drive</Link>,
-            key: 'MyDrive',
+            label: <Link to={'/'}>Home</Link>,
+            key: 'Home',
             icon: <HomeFilled />
+
         },
-        ...(auth.isAuthenticated ? [
+        ...(auth.user.role === 'ROLE_USER' ? [
+            {
+                label: <Link to={'/my-drive'}>My Drive</Link>,
+                key: 'MyDrive',
+                icon: <StarTwoTone />
+            },
+            {
+                label: <Link to={'/favourites'}>Favourite</Link>,
+                key: 'MyFavourite',
+                icon: <LikeOutlined />
+            },
+            {
+                label: <Link to={'/my-profile'}>My Profile</Link>,
+                key: 'MyProfile',
+                icon: <ProfileFilled />
+            },
+        ] : []),
+        ...(auth.user.role === 'ROLE_ADMIN' ? [
             {
                 label: <Link to={'/users'}>Users</Link>,
                 key: 'Users',
                 icon: <UserOutlined />
-            },
-            {
-                label: <Link to={'/favourites'}>Favourite</Link>,
-                key: 'Favourite',
-                icon: <LikeOutlined />
             },
             {
                 label: <Link to={'/folders'}>Folders</Link>,

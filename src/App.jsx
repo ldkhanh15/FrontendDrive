@@ -17,7 +17,8 @@ function App() {
           isAuthenticated: true,
           user: {
             email: res?.data?.user?.email,
-            name: res?.data?.user?.name
+            name: res?.data?.user?.name,
+            role:res?.data?.user?.role?.name
           }
         })
       }

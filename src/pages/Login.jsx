@@ -24,12 +24,14 @@ const Login = () => {
                 description:
                     res.message && Array.isArray(res.message) ? res.message[0] : res.message,
             });
-
+            console.log(res.data.user);
+            console.log(res.data.user.role.name);
             setAuth({
                 isAuthenticated: true,
                 user: {
                     email: res.data.user.email,
-                    name: res.data.user.name
+                    name: res.data.user.name,
+                    role:res.data.user.role.name
                 }
             })
             navigator("/")
@@ -43,9 +45,6 @@ const Login = () => {
         }
 
     }
-
-
-
 
     return (
         <div style={{ margin: 50 }}>

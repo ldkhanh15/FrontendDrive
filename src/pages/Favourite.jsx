@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, message, Space, Tag, Typography } from 'antd';
+import { Table, Button, Modal, Form, Select, message, Space, Tag, Typography } from 'antd';
 import axios from 'axios';
 import { addFavourite, deleteFavourite, getAllFavourite } from '../services/favouriteService';
 import { FileFilled, FolderFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { getUser } from '../services/userService';
-import { getAllFolder, getDetailFolder } from '../services/itemService';
+import { getDetailFolder } from '../services/folderService';
 
 const { Option } = Select;
 const { Text } = Typography

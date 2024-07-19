@@ -5,7 +5,8 @@ export const AuthContext = createContext({
     isAuthenticated: false,
     user: {
         email: "",
-        name: ""
+        name: "",
+        role:""
     }
 })
 export const AuthWrapper = (props) => {
@@ -13,7 +14,8 @@ export const AuthWrapper = (props) => {
         isAuthenticated: false,
         user: {
             email: "",
-            name: ""
+            name: "",
+            role:""
         }
     })
     const [appLoading, setAppLoading] = useState(false)

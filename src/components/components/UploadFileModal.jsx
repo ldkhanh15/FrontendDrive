@@ -1,7 +1,7 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Modal, notification, Upload } from 'antd';
-import React, { useState } from 'react'
-import { uploadFile } from '../../services/itemService';
+import React from 'react'
+import { uploadFile } from '../../services/fileService';
 
 const UploadFileModal = ({ uploadModalVisible, setUploadModalVisible ,itemId}) => {
 

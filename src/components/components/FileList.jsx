@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const { Text } = Typography;
 
-const FileList = ({columns, data, loading, pagination, onChange, parent, handleRightClick}) => {
+const FileList = ({ personal, columns, data, loading, pagination, onChange, parent, handleRightClick }) => {
   const navigate = useNavigate();
   const renderParentFolder = () => {
     if (parent) {
@@ -20,8 +20,8 @@ const FileList = ({columns, data, loading, pagination, onChange, parent, handleR
     }
     return null;
   };
- 
-  
+
+
 
   return (
     <>
@@ -39,7 +39,11 @@ const FileList = ({columns, data, loading, pagination, onChange, parent, handleR
             onRow={(record) => ({
               onDoubleClick: () => {
                 if (record.itemType === 'FOLDER') {
-                  navigate(`/folders/${record.itemId}`);
+                  if (personal === true) {
+                    navigate(`/my-drive/${record.itemId}`);
+                  } else {
+                    navigate(`/folders/${record.itemId}`);
+                  }
                 } else {
                   window.open(`http://localhost:8080/storage/file/${record.filePath}`, '_blank');
                 }
@@ -48,7 +52,7 @@ const FileList = ({columns, data, loading, pagination, onChange, parent, handleR
               onContextMenu: (event) => handleRightClick(event, record),
             })}
           />
-         
+
 
 
         </>

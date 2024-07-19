@@ -16,6 +16,9 @@ import Folder from './pages/Folder.jsx';
 import FolderDetail from './pages/FolderDetail.jsx';
 import Role from './pages/Role.jsx';
 import Permission from './pages/Permission.jsx';
+import MyProfile from './pages/MyProfile.jsx';
+import MyDrive from './pages/MyDrive.jsx';
+import MyDriveDetail from './pages/MyDriveDetail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -49,6 +52,18 @@ const router = createBrowserRouter([
       {
         path:"permissions",
         element:<Permission/>
+      },
+      {
+        path:"my-profile",
+        element:<MyProfile/>
+      },
+      {
+        path:"my-drive",
+        element:<MyDrive/>
+      },
+      {
+        path:"my-drive/:id",
+        element:<MyDriveDetail/>
       }
     ]
   },

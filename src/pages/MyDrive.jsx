@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button,Menu, notification, Select, Space, Tag } from 'antd';
+import { Typography, Button, Menu, notification, Select, Space, Tag } from 'antd';
 import FileList from '../components/components/FileList';
+import {  deleteFolderByUser,  getFolderByUser, restoreFolderByUser, softDeleteFolderByUser } from '../services/folderService';
+import { deleteFileByUser, deleteSoftFileByUser, restoreFileByUser } from '../services/fileService';
 import { Link, useParams } from 'react-router-dom';
 import { FileFilled, FolderFilled } from '@ant-design/icons';
 import UploadFileModal from '../components/components/UploadFileModal';
 import CreateEditFolderModal from '../components/components/CreateEditFolderModal';
 import ActivityModal from '../components/components/ActivityModal';
 import AccessModal from '../components/components/AccessModal';
-import { deleteFolder, deleteSoftFolder, getDetailFolder, restoreFolder } from '../services/folderService';
-import { deleteFile, deleteSoftFile, restoreFile } from '../services/fileService';
 
 const { Text } = Typography;
 
-const FolderDetail = () => {
+const MyDrive = () => {
     const [data, setData] = useState({
         item: [],
         parent: {},
@@ -23,7 +23,7 @@ const FolderDetail = () => {
     const { id } = useParams();
     const fetchData = async () => {
         setLoading(true);
-        const res = await getDetailFolder(id, typeItem);
+        const res = await getFolderByUser(id, typeItem);
         if (res?.data) {
             const sub = res?.data?.subFolders || []
             const files = res?.data?.files || [];
@@ -88,9 +88,9 @@ const FolderDetail = () => {
         let res;
 
         if (type === 'FOLDER') {
-            res = await restoreFolder(id)
+            res = await restoreFolderByUser(id)
         } else if (type === 'FILE') {
-            res = await restoreFile(itemId, id)
+            res = await restoreFileByUser(itemId, id)
         }
 
         if (res.statusCode === 200) {
@@ -114,15 +114,15 @@ const FolderDetail = () => {
         let res;
         if (typeItem === 'disabled') {
             if (type === 'FOLDER') {
-                res = await deleteFolder(id)
+                res = await deleteFolderByUser(id)
             } else if (type === 'FILE') {
-                res = await deleteFile(data.itemId, id)
+                res = await deleteFileByUser(data.itemId, id)
             }
         } else if (typeItem === 'enabled') {
             if (type === 'FOLDER') {
-                res = await deleteSoftFolder(id)
+                res = await softDeleteFolderByUser(id)
             } else if (type === 'FILE') {
-                res = await deleteSoftFile(data.itemId, id)
+                res = await deleteSoftFileByUser(data.itemId, id)
             }
         }
         if (res.statusCode === 200) {
@@ -266,9 +266,8 @@ const FolderDetail = () => {
                     ) : (
                         <a target="_blank" href={`http://localhost:8080/storage/file/${record.filePath}`}>Open</a>
                     )}
-                    {
-                        typeItem !== 'deleted' ? <span onClick={() => handleDelete(record.itemType, record.itemId)}>Delete</span> : null
-                    }
+
+                    <span onClick={() => handleDelete(record.itemType, record.itemId)}>Delete</span>
                     {
                         typeItem === 'enabled' ? <span onClick={() => handleRename(record.itemType, record.itemId)}>Rename</span> : null
 
@@ -308,11 +307,6 @@ const FolderDetail = () => {
                             value: 'disabled',
                             label: 'Disabled',
                         },
-                        {
-                            value: 'deleted',
-                            label: 'Deleted',
-                        },
-
                     ]}
                 />
             </Space>
@@ -320,7 +314,7 @@ const FolderDetail = () => {
 
         {
             data.item !== null && data.itemId !== null &&
-            <FileList personal={false} columns={columns} itemId={data.itemId} handleRightClick={handleRightClick} data={data.item} parent={data.parent} current={data.itemId} loading={loading} onChange={handleTableChange} />
+            <FileList personal={true} columns={columns} itemId={data.itemId} handleRightClick={handleRightClick} data={data.item} parent={data.parent} current={data.itemId} loading={loading} onChange={handleTableChange} />
         }
         {contextMenu.visible && (
             <Menu
@@ -342,4 +336,4 @@ const FolderDetail = () => {
     </>;
 };
 
-export default FolderDetail;
+export default MyDrive;

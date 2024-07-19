@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Table, Select, Form, Input, Popconfirm } from 'antd';
-import { getAccess, addAccess, deleteAccess } from '../../services/itemService';
+import { getAccess, addAccess, deleteAccess } from '../../services/accessItemService';
 import { AccessType } from '../../ulti/AccessType';
 
 const { Option } = Select;

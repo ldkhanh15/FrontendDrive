@@ -1,7 +1,7 @@
 import { Checkbox, Form, Input, Modal, notification } from 'antd'
 import React, { useState } from 'react'
-import { createFolder, renameFile, renameFolder } from '../../services/itemService';
-
+import { createFolder, renameFolder } from '../../services/folderService';
+import { renameFile } from '../../services/fileService';
 const CreateEditFolderModal = ({ itemId, values, modalVisible, setModalVisible }) => {
 
     const [form] = Form.useForm();

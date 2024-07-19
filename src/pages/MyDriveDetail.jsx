@@ -7,12 +7,12 @@ import UploadFileModal from '../components/components/UploadFileModal';
 import CreateEditFolderModal from '../components/components/CreateEditFolderModal';
 import ActivityModal from '../components/components/ActivityModal';
 import AccessModal from '../components/components/AccessModal';
-import { deleteFolder, deleteSoftFolder, getDetailFolder, restoreFolder } from '../services/folderService';
-import { deleteFile, deleteSoftFile, restoreFile } from '../services/fileService';
+import { deleteFolderByUser, getDetailFolderByUser, restoreFolderByUser, softDeleteFolderByUser } from '../services/folderService';
+import { deleteFileByUser, deleteSoftFileByUser, restoreFileByUser } from '../services/fileService';
 
 const { Text } = Typography;
 
-const FolderDetail = () => {
+const MyDriveDetail = () => {
     const [data, setData] = useState({
         item: [],
         parent: {},
@@ -23,7 +23,7 @@ const FolderDetail = () => {
     const { id } = useParams();
     const fetchData = async () => {
         setLoading(true);
-        const res = await getDetailFolder(id, typeItem);
+        const res = await getDetailFolderByUser(id);
         if (res?.data) {
             const sub = res?.data?.subFolders || []
             const files = res?.data?.files || [];
@@ -88,9 +88,9 @@ const FolderDetail = () => {
         let res;
 
         if (type === 'FOLDER') {
-            res = await restoreFolder(id)
+            res = await restoreFolderByUser(id)
         } else if (type === 'FILE') {
-            res = await restoreFile(itemId, id)
+            res = await restoreFileByUser(itemId, id)
         }
 
         if (res.statusCode === 200) {
@@ -114,15 +114,15 @@ const FolderDetail = () => {
         let res;
         if (typeItem === 'disabled') {
             if (type === 'FOLDER') {
-                res = await deleteFolder(id)
+                res = await deleteFolderByUser(id)
             } else if (type === 'FILE') {
-                res = await deleteFile(data.itemId, id)
+                res = await deleteFileByUser(data.itemId, id)
             }
         } else if (typeItem === 'enabled') {
             if (type === 'FOLDER') {
-                res = await deleteSoftFolder(id)
+                res = await softDeleteFolderByUser(id)
             } else if (type === 'FILE') {
-                res = await deleteSoftFile(data.itemId, id)
+                res = await deleteSoftFileByUser(data.itemId, id)
             }
         }
         if (res.statusCode === 200) {
@@ -320,7 +320,7 @@ const FolderDetail = () => {
 
         {
             data.item !== null && data.itemId !== null &&
-            <FileList personal={false} columns={columns} itemId={data.itemId} handleRightClick={handleRightClick} data={data.item} parent={data.parent} current={data.itemId} loading={loading} onChange={handleTableChange} />
+            <FileList personal={true} columns={columns} itemId={data.itemId} handleRightClick={handleRightClick} data={data.item} parent={data.parent} current={data.itemId} loading={loading} onChange={handleTableChange} />
         }
         {contextMenu.visible && (
             <Menu
@@ -342,4 +342,4 @@ const FolderDetail = () => {
     </>;
 };
 
-export default FolderDetail;
+export default MyDriveDetail;
