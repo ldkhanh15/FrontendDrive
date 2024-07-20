@@ -1,11 +1,12 @@
 import { Checkbox, Form, Input, Modal, notification } from 'antd'
-import React, { useState } from 'react'
-import { createFolder, renameFolder } from '../../services/folderService';
-import { renameFile } from '../../services/fileService';
+import React, { useContext, useState } from 'react'
+import { createFolder, createFolderByUser, renameFolder, renameFolderByUser } from '../../services/folderService';
+import { renameFile, renameFileByUser } from '../../services/fileService';
+import { AuthContext } from '../context/auth.context';
 const CreateEditFolderModal = ({ itemId, values, modalVisible, setModalVisible }) => {
 
     const [form] = Form.useForm();
-
+    const { auth } = useContext(AuthContext)
     const handleModalCancel = () => {
         form.resetFields();
         setModalVisible(false);
@@ -13,26 +14,57 @@ const CreateEditFolderModal = ({ itemId, values, modalVisible, setModalVisible }
     const handleModalOk = async () => {
         let res;
         if (Object.keys(values).length) {
-            if (values.type === 'FOLDER') {
-                res = await renameFolder({
-                    id: values.id,
-                    public: values.public ? true : false,
-                    folderName: form.getFieldValue('name')
+            if (auth.user.role === 'ROLE_ADMIN') {
+                if (values.type === 'FOLDER') {
+                    res = await renameFolder(itemId,{
+                        id: values.id,
+                        public: form.getFieldValue('public') ? true : false,
+                        folderName: form.getFieldValue('name')
+                    })
+                } else if (values.type === 'FILE') {
+                    res = await renameFile(itemId, values.id, {
+                        public: form.getFieldValue('public') ? true : false,
+                        fileName: form.getFieldValue('name')
+                    })
+                }
+            } else {
+                if (values.type === 'FOLDER') {
+
+                    res = await renameFolderByUser(itemId,{
+                        id: values.id,
+                        public: form.getFieldValue('public') ? true : false,
+                        folderName: form.getFieldValue('name')
+                    })
+                } else if (values.type === 'FILE') {
+                    res = await renameFileByUser(itemId, values.id, {
+                        public: form.getFieldValue('public') ? true : false,
+                        fileName: form.getFieldValue('name')
+                    })
+                }
+            }
+
+        } else {
+            if (auth.user.role === 'ROLE_ADMIN') {
+                res = await createFolder(itemId, {
+                    folderName: form.getFieldValue('name'),
+                    enabled: true,
+                    public: true,
+                    parent: {
+                        id: itemId
+                    }
                 })
-            } else if (values.type === 'FILE') {
-                res = await renameFile(itemId, {
-                    id: values.id,
-                    public: values.public ? true : false,
-                    fileName: form.getFieldValue('name')
+            } else {
+                res = await createFolderByUser(itemId, {
+                    folderName: form.getFieldValue('name'),
+                    enabled: true,
+                    public: true,
+                    parent: {
+                        id: itemId
+                    }
                 })
             }
-        } else {
-            res = await createFolder(
-                form.getFieldValue('name'),
-                itemId
-            )
         }
-        
+
 
         if (res?.statusCode === 200) {
             notification.success({

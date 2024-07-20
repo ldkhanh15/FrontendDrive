@@ -12,7 +12,7 @@ const FileList = ({ personal, columns, data, loading, pagination, onChange, pare
       return (
         <>
           <FolderFilled style={{ marginTop: 10 }} />
-          <Link to={`/folders/${parent.itemId}`}>
+          <Link to={personal? `/my-drive/${parent.itemId}`:`/folders/${parent.itemId}`}>
             <Text strong>{parent.folderName}</Text>
           </Link>
         </>
@@ -39,7 +39,7 @@ const FileList = ({ personal, columns, data, loading, pagination, onChange, pare
             onRow={(record) => ({
               onDoubleClick: () => {
                 if (record.itemType === 'FOLDER') {
-                  if (personal === true) {
+                  if (personal) {
                     navigate(`/my-drive/${record.itemId}`);
                   } else {
                     navigate(`/folders/${record.itemId}`);

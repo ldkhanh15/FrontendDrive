@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Menu, notification, Select, Space, Tag } from 'antd';
+import { Typography, Button,Menu, notification, Select, Space, Tag } from 'antd';
 import FileList from '../components/components/FileList';
-import {  deleteFolderByUser,  getFolderByUser, restoreFolderByUser, softDeleteFolderByUser } from '../services/folderService';
-import { deleteFileByUser, deleteSoftFileByUser, restoreFileByUser } from '../services/fileService';
 import { Link, useParams } from 'react-router-dom';
 import { FileFilled, FolderFilled } from '@ant-design/icons';
 import UploadFileModal from '../components/components/UploadFileModal';
 import CreateEditFolderModal from '../components/components/CreateEditFolderModal';
 import ActivityModal from '../components/components/ActivityModal';
 import AccessModal from '../components/components/AccessModal';
+import { deleteFolderByUser, getDetailFolderByUser, restoreFolderByUser, softDeleteFolderByUser } from '../services/folderService';
+import { deleteFileByUser, deleteSoftFileByUser, restoreFileByUser } from '../services/fileService';
 
 const { Text } = Typography;
 
-const MyDrive = () => {
+const MyTrashDetail = () => {
     const [data, setData] = useState({
         item: [],
         parent: {},
@@ -23,7 +23,7 @@ const MyDrive = () => {
     const { id } = useParams();
     const fetchData = async () => {
         setLoading(true);
-        const res = await getFolderByUser(id, typeItem);
+        const res = await getDetailFolderByUser(id);
         if (res?.data) {
             const sub = res?.data?.subFolders || []
             const files = res?.data?.files || [];
@@ -49,7 +49,7 @@ const MyDrive = () => {
         setLoading(false);
     };
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, record: null });
-    console.log(data);
+
     const handleRightClick = (event, record) => {
         event.preventDefault();
         setContextMenu({
@@ -178,7 +178,7 @@ const MyDrive = () => {
             render: (text, record) => (
                 <Space onContextMenu={(e) => handleRightClick(e, record)}>
                     {record.itemType === 'FOLDER' ? (
-                        <Link to={`/folders/${record.itemId}`}>
+                        <Link to={`/my-drive/${record.itemId}`}>
                             <FolderFilled style={{ marginRight: 8 }} />
                         </Link>
                     ) : (
@@ -266,8 +266,9 @@ const MyDrive = () => {
                     ) : (
                         <a target="_blank" href={`http://localhost:8080/storage/file/${record.filePath}`}>Open</a>
                     )}
-
-                    <span onClick={() => handleDelete(record.itemType, record.itemId)}>Delete</span>
+                    {
+                        typeItem !== 'deleted' ? <span onClick={() => handleDelete(record.itemType, record.itemId)}>Delete</span> : null
+                    }
                     {
                         typeItem === 'enabled' ? <span onClick={() => handleRename(record.itemType, record.itemId)}>Rename</span> : null
 
@@ -291,25 +292,6 @@ const MyDrive = () => {
     return <>
         <div>
             <Button onClick={handleCreateFolder}>Create Folder</Button>
-            <Space>
-                <Select
-                    value={typeItem}
-                    style={{
-                        width: 120,
-                    }}
-                    onChange={(value) => setTypeItem(value)}
-                    options={[
-                        {
-                            value: 'enabled',
-                            label: 'Enabled',
-                        },
-                        {
-                            value: 'disabled',
-                            label: 'Disabled',
-                        },
-                    ]}
-                />
-            </Space>
         </div>
 
         {
@@ -330,10 +312,10 @@ const MyDrive = () => {
             </Menu>
         )}
         <CreateEditFolderModal values={values} itemId={data.itemId} modalVisible={modalVisible} setModalVisible={setModalVisible} />
-        <UploadFileModal itemId={data.itemId} uploadModalVisible={uploadModalVisible} setUploadModalVisible={setUploadModalVisible} />
+        <UploadFileModal personal={true} itemId={data.itemId} uploadModalVisible={uploadModalVisible} setUploadModalVisible={setUploadModalVisible} />
         <ActivityModal itemId={itemSelected} open={open} setOpen={setOpen} />
         <AccessModal values={dataAccess} open={openAccess} setOpen={setOpenAccess} />
     </>;
 };
 
-export default MyDrive;
+export default MyTrashDetail;

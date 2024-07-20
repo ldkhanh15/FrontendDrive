@@ -8,21 +8,14 @@ export const getAllFolder = (page, pageSize, type, searchQuery) => {
 export const getDetailFolder = (id, itemType) => {
     return axios.get(`/api/v1/admin/folders/${id}/${itemType}`)
 }
-export const createFolder = (name, parent) => {
-    return axios.post('/api/v1/admin/folders', {
-        folderName: name,
-        enabled: true,
-        public: true,
-        parent: {
-            id: parent
-        }
-    })
+export const createFolder = (folderId,data) => {
+    return axios.post(`/api/v1/admin/folders/${folderId}`,data )
 }
 export const deleteFolder = (id) => {
     return axios.delete(`/api/v1/admin/folders/${id}`)
 }
-export const renameFolder = (data) => {
-    return axios.put(`/api/v1/admin/folders`, data)
+export const renameFolder = (folderId,data) => {
+    return axios.put(`/api/v1/admin/folders/${folderId}`, data)
 }
 export const deleteSoftFolder = (id) => {
     return axios.delete(`/api/v1/admin/folders/${id}/soft-delete`)
@@ -35,14 +28,14 @@ export const restoreFolder = (id) => {
 export const getFolderByUser = (id,itemType) => {
     return axios.get(`/api/v1/user/folders/${itemType}`)
 }
-export const getDetailFolderByUser = (folderId) => {
-    return axios.get(`/api/v1/user/folders/${folderId}`)
+export const getDetailFolderByUser = (folderId,query) => {
+    return axios.get(`/api/v1/user/folders/${folderId}?query=${query}`)
 }
-export const createFolderByUser = (data) => {
-    return axios.post('/api/v1/user/folders', data)
+export const createFolderByUser = (folderId,data) => {
+    return axios.post(`/api/v1/user/folders/${folderId}`, data)
 }
-export const updateFolderByUser = (data) => {
-    return axios.put('/api/v1/user/folders', data)
+export const renameFolderByUser = (folderId,data) => {
+    return axios.put(`/api/v1/user/folders/${folderId}`, data)
 }
 export const softDeleteFolderByUser = (folderId) => {
     return axios.delete(`/api/v1/user/folders/${folderId}/soft-delete`)

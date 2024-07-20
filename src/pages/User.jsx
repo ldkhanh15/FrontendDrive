@@ -85,7 +85,7 @@ const User = () => {
     setIsModalVisible(true);
     form.setFieldsValue({
       ...record,
-      role: record.role.id, // Set the role ID for the Select component
+      role: record.role.id,
     });
   };
 

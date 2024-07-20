@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button,Menu, notification, Select, Space, Tag } from 'antd';
+import { Typography, Menu, notification, Select, Space, Tag } from 'antd';
 import FileList from '../components/components/FileList';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { FileFilled, FolderFilled } from '@ant-design/icons';
 import UploadFileModal from '../components/components/UploadFileModal';
 import CreateEditFolderModal from '../components/components/CreateEditFolderModal';
@@ -9,6 +9,8 @@ import ActivityModal from '../components/components/ActivityModal';
 import AccessModal from '../components/components/AccessModal';
 import { deleteFolderByUser, getDetailFolderByUser, restoreFolderByUser, softDeleteFolderByUser } from '../services/folderService';
 import { deleteFileByUser, deleteSoftFileByUser, restoreFileByUser } from '../services/fileService';
+import { addFavourite } from '../services/favouriteService';
+import Search from 'antd/es/transfer/search';
 
 const { Text } = Typography;
 
@@ -21,9 +23,9 @@ const MyDriveDetail = () => {
     const [typeItem, setTypeItem] = useState('enabled')
     const [loading, setLoading] = useState(false);
     const { id } = useParams();
-    const fetchData = async () => {
+    const fetchData = async (query) => {
         setLoading(true);
-        const res = await getDetailFolderByUser(id);
+        const res = await getDetailFolderByUser(id,query);
         if (res?.data) {
             const sub = res?.data?.subFolders || []
             const files = res?.data?.files || [];
@@ -73,9 +75,16 @@ const MyDriveDetail = () => {
     };
     const [uploadModalVisible, setUploadModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const handleSearch = (e) => {
+        setSearchParams({
+            name: e.target.value
+        })
+    };
     useEffect(() => {
-        fetchData();
-    }, [id, typeItem]);
+        const searchQuery = searchParams.get('name') || '';
+        fetchData(searchQuery);
+    }, [id, typeItem, searchParams]);
 
     const [values, setValues] = useState({
         itemId: 0,
@@ -161,12 +170,29 @@ const MyDriveDetail = () => {
         })
         setModalVisible(true)
     }
+    const handleAddFavourite = async (id) => {
+        const res = await addFavourite({
+            item: {
+                id
+            }
+        });
+        if (res.statusCode === 200) {
+            notification.success({
+                message: 'Successfully',
+                description:
+                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+            })
 
-    const handleCreateFolder = () => {
-        setValues({})
-        setModalVisible(true)
+        } else {
+            notification.error({
+                message: "Có lỗi xảy ra",
+                description:
+                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                duration: 5,
+            });
+        }
     }
-
+  
     const handleTableChange = (pagination) => {
 
     };
@@ -178,7 +204,7 @@ const MyDriveDetail = () => {
             render: (text, record) => (
                 <Space onContextMenu={(e) => handleRightClick(e, record)}>
                     {record.itemType === 'FOLDER' ? (
-                        <Link to={`/folders/${record.itemId}`}>
+                        <Link to={`/my-drive/${record.itemId}`}>
                             <FolderFilled style={{ marginRight: 8 }} />
                         </Link>
                     ) : (
@@ -195,10 +221,10 @@ const MyDriveDetail = () => {
             render: (text) => <Text>{text}</Text>,
         },
         {
-            title: 'Created By',
-            dataIndex: ['user', 'email'],
-            key: 'createdBy',
-            render: (email) => <Text>{email}</Text>,
+            title: 'Owner',
+            dataIndex: 'createdBy',
+            key: 'Owner',
+            render: (Owner) => <Text>{Owner}</Text>,
         },
         {
             title: 'Created At',
@@ -279,6 +305,7 @@ const MyDriveDetail = () => {
                     {
                         record.itemType === 'FOLDER' ? <span onClick={() => handleActivity(record.itemId)}>Activity</span> : null
                     }
+                    <span onClick={() => handleAddFavourite(record.itemId)}>Add Favourite</span>
                     <span onClick={() => handleAccess(record.itemId, record.itemType)}>Access</span>
                 </Space>
             ),
@@ -291,29 +318,30 @@ const MyDriveDetail = () => {
     const [dataAccess, setDataAccess] = useState({})
     return <>
         <div>
-            <Button onClick={handleCreateFolder}>Create Folder</Button>
             <Space>
-                <Select
-                    value={typeItem}
-                    style={{
-                        width: 120,
-                    }}
-                    onChange={(value) => setTypeItem(value)}
-                    options={[
-                        {
-                            value: 'enabled',
-                            label: 'Enabled',
-                        },
-                        {
-                            value: 'disabled',
-                            label: 'Disabled',
-                        },
-                        {
-                            value: 'deleted',
-                            label: 'Deleted',
-                        },
-
-                    ]}
+                {
+                    Object.keys(data.parent).length === 0 && <Select
+                        value={typeItem}
+                        style={{
+                            width: 120,
+                        }}
+                        onChange={(value) => setTypeItem(value)}
+                        options={[
+                            {
+                                value: 'enabled',
+                                label: 'Enabled',
+                            },
+                            {
+                                value: 'disabled',
+                                label: 'Disabled',
+                            },
+                        ]}
+                    />
+                }
+                <Search
+                    placeholder="Search by name"
+                    onChange={handleSearch}
+                    style={{ width: 200 }}
                 />
             </Space>
         </div>
@@ -336,7 +364,7 @@ const MyDriveDetail = () => {
             </Menu>
         )}
         <CreateEditFolderModal values={values} itemId={data.itemId} modalVisible={modalVisible} setModalVisible={setModalVisible} />
-        <UploadFileModal itemId={data.itemId} uploadModalVisible={uploadModalVisible} setUploadModalVisible={setUploadModalVisible} />
+        <UploadFileModal personal={true} itemId={data.itemId} uploadModalVisible={uploadModalVisible} setUploadModalVisible={setUploadModalVisible} />
         <ActivityModal itemId={itemSelected} open={open} setOpen={setOpen} />
         <AccessModal values={dataAccess} open={openAccess} setOpen={setOpenAccess} />
     </>;

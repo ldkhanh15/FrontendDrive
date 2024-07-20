@@ -51,3 +51,22 @@ export const deactivateUser = (id) => {
 
 
 //USER
+export const getAccount = () => {
+    return axios.get('/api/v1/user/users')
+}
+
+export const updateUserByUser = (data) => {
+    return axios.put(`/api/v1/user/users`, data)
+}
+export const changePasswordByUser = (data) => {
+    return axios.post('/api/v1/user/users/change-password', data)
+}
+export const changeAvatarByUser = (file) => {
+    const formData = new FormData();
+    formData.append('file', file)
+    return axios.post(`/api/v1/user/users/change-avatar`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}

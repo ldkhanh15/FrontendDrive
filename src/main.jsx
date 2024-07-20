@@ -19,6 +19,7 @@ import Permission from './pages/Permission.jsx';
 import MyProfile from './pages/MyProfile.jsx';
 import MyDrive from './pages/MyDrive.jsx';
 import MyDriveDetail from './pages/MyDriveDetail.jsx';
+import MyTrashDetail from './pages/MyTrashDetail.jsx';
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
       {
         path:"my-drive/:id",
         element:<MyDriveDetail/>
+      },
+      {
+        path:"my-trash/:id",
+        element:<MyTrashDetail/>
       }
     ]
   },

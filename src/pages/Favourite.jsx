@@ -17,7 +17,6 @@ const Favourite = () => {
 
   useEffect(() => {
     fetchFavourites();
-    fetchItems();
   }, []);
 
   const fetchFavourites = async () => {
@@ -32,14 +31,6 @@ const Favourite = () => {
   };
 
 
-  const fetchItems = async () => {
-    try {
-      const response = await getDetailFolder(1, 'enabled'); // Adjust the endpoint as needed
-      setItems(response.data.subFolders)
-    } catch (error) {
-      message.error('Failed to load items');
-    }
-  };
 
   const handleCreate = () => {
     form.resetFields();
@@ -91,66 +82,16 @@ const Favourite = () => {
       ),
     },
     {
-      title: 'Created At',
-      dataIndex: ['item', 'createdAt'],
-      key: 'createdAt',
-      render: (createdAt) => <Text>{new Date(createdAt).toLocaleString()}</Text>,
-    },
-    {
-      title: 'Enabled',
-      dataIndex: ['item', 'isEnabled'],
-      key: 'isEnabled',
-      render: (isEnabled) => {
-
-        let tag = isEnabled ? 'true' : 'false'
-        let color = isEnabled ? 'green' : 'red'
-
-        return (
-          <Tag color={color} key={tag}>
-            {tag.toUpperCase()}
-          </Tag>
-        );
-
-      }
-    },
-    {
-      title: 'Deleted',
-      dataIndex: ['item', 'isDeleted'],
-      key: 'isDeleted',
-      render: (isDeleted) => {
-        let tag = isDeleted === true ? 'true' : 'false'
-        let color = isDeleted === true ? 'green' : 'red'
-
-        return (
-          <Tag color={color} key={tag}>
-            {tag.toUpperCase()}
-          </Tag>
-        );
-
-      }
-    },
-    {
-      title: 'Public',
-      key: ['item', 'isPublic'],
-      dataIndex: 'isPublic',
-      render: (isPublic) => {
-
-        let tag = isPublic ? 'true' : 'false'
-        let color = isPublic ? 'green' : 'red'
-
-        return (
-          <Tag color={color} key={tag}>
-            {tag.toUpperCase()}
-          </Tag>
-        );
-
-      }
-    },
-    {
       title: 'Owner email',
       dataIndex: ['item', 'user', 'email'],
       key: 'owner email',
       render: (email) => <Text>{email}</Text>,
+    },
+    {
+      title: 'Created At',
+      dataIndex: ['item', 'createdAt'],
+      key: 'createdAt',
+      render: (createdAt) => <Text>{new Date(createdAt).toLocaleString()}</Text>,
     },
     {
       title: 'Actions',

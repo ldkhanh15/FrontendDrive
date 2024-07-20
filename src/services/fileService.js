@@ -13,8 +13,8 @@ export const uploadFile = (folderId, file) => {
 export const deleteFile = (folderId, id) => {
     return axios.delete(`/api/v1/admin/folders/${folderId}/files/${id}`)
 }
-export const renameFile = (folderId, data) => {
-    return axios.put(`/api/v1/admin/folders/${folderId}/files`, data)
+export const renameFile = (folderId,fileId, data) => {
+    return axios.put(`/api/v1/admin/folders/${folderId}/files/${fileId}`, data)
 }
 export const deleteSoftFile = (folderId, id) => {
     return axios.delete(`/api/v1/admin/folders/${folderId}/files/${id}/soft-delete`)
@@ -49,8 +49,8 @@ export const uploadFileByUser = (folderId, file) => {
 export const deleteFileByUser = (folderId, id) => {
     return axios.delete(`/api/v1/user/folders/${folderId}/files/${id}`)
 }
-export const renameFileByUser = (folderId, data) => {
-    return axios.put(`/api/v1/user/folders/${folderId}/files`, data)
+export const renameFileByUser = (folderId,fileId, data) => {
+    return axios.put(`/api/v1/user/folders/${folderId}/files/${fileId}`, data)
 }
 export const deleteSoftFileByUser = (folderId, id) => {
     return axios.delete(`/api/v1/user/folders/${folderId}/files/${id}/soft-delete`)

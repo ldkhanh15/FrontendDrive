@@ -1,16 +1,16 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Modal, notification, Upload } from 'antd';
 import React from 'react'
-import { uploadFile } from '../../services/fileService';
+import { uploadFile, uploadFileByUser } from '../../services/fileService';
 
-const UploadFileModal = ({ uploadModalVisible, setUploadModalVisible ,itemId}) => {
+const UploadFileModal = ({ personal, uploadModalVisible, setUploadModalVisible, itemId }) => {
 
     const handleUploadModalCancel = () => {
         setUploadModalVisible(false);
     };
 
     const handleUploadFile = async (file) => {
-        const res = await uploadFile(itemId, file)
+        const res = personal ? await uploadFileByUser(itemId, file) : await uploadFile(itemId, file)
         if (res?.data) {
             notification.success({
                 message: 'Successfully',
